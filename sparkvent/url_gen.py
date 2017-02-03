@@ -1,4 +1,4 @@
-## Generate URL based on the config file
+# Generate URL based on the config file
 
 
 class UrlGen(object):
