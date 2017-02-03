@@ -1,0 +1,27 @@
+## Config file
+
+# General
+period: 1 #second
+
+
+
+# Input
+spark-master: spark://xx:4000/
+history-server: spark://xx:xxxx/
+
+# Metrics
+app:
+- x
+
+job:
+- x
+
+stage:
+- x
+
+task:
+- x
+
+
+# Output
+redis: 10.2.3.4:5002
