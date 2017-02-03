@@ -2,7 +2,7 @@
 A library fetching and storing Apache Spark events in runtime 
 
 ```
-            +-------------------------+
+             +-------------------------+
          +--|   Spark Events Server   |
          |  +-------------------------+
          |
@@ -10,13 +10,11 @@ A library fetching and storing Apache Spark events in runtime
          +--|   Spark History Server  |
          |  +-------------------------+
          |
-         |  +-------------+  +--------+
-RESTful  |  |             |  |        |
-  APIs   +->|Sparkvent Lib|<-| Config |
-            |             |  |        |
-            +------+------+  +--------+
+         |  +-------------+    +----------+
+RESTful  +->|Sparkvent Lib|<---|  Config  |
+  APIs      +-------------+    +----------+
                    |
-                   v           +----------+
+                   v call      +----------+
             +-------------+    | redis DB |
             |    Script   |--> +----------+
             +-------------+    +----------+
