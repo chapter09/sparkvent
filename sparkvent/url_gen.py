@@ -13,7 +13,7 @@ def generate_url(host_addr, rest_api, options, port=18080):
         host_addr = '142.150.208.177'
 
     rest_api_host = '/api/v1'
-    return host_addr + str(port) + rest_api_host + rest_api + get_option_string(options)
+    return 'http://' + host_addr + ':' + str(port) + rest_api_host + rest_api + get_option_string(options)
 
 
 def get_option_string(option):
