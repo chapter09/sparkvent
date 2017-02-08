@@ -7,11 +7,14 @@ from multiprocessing.pool import ThreadPool
 
 class http_req(object):
     def __init__(self, max_threads = 5):
+        self.max_url_allowed = max_threads
         self.thread_pool = ThreadPool(max_threads)
         self.urls = []
         self.json_result = []
 
     def add_url(self,url):
+        if len(self.urls) == self.max_url_allowed:
+            return None
         self.urls.append(url)
 
     def make_request(self):
