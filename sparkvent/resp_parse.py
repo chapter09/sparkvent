@@ -5,7 +5,7 @@ from http_req import *
 
 class AbstractParser(object):
     def __init__(self):
-        pass
+        self.http_requester = http_req()
 
     def get_url(self, app_type):
         raise NotImplementedError
@@ -25,7 +25,7 @@ class AppParser(AbstractParser):
 
     def get_basic_app_info(self):
         request_url = self.get_url("app")
-        app_info = get_json_from_address(request_url)
+        app_info = self.http_requester.single_request(request_url)
         return app_info
 
     def get_url(self, app_type):
