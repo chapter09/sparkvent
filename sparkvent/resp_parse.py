@@ -1,7 +1,7 @@
 # HTTP response (JSON) parser
 from url_gen import *
 from http_req import *
-
+import json
 
 class AbstractParser(object):
     BASE_ENDPOINT = '/applications'
@@ -23,17 +23,34 @@ class AppParser(AbstractParser):
 
     def __init__(self):
         super(AppParser, self).__init__()
-        self.aID = []  # all application IDs
+        self.apps = []  # all application IDs
 
     def get_basic_app_info(self):
         request_url = self.get_url("app")
-        app_info = self.http_requester.single_request(request_url)
-        return app_info
+        self.http_requester.add_url(request_url)
+        app_info = self.http_requester.make_request()
+        return app_info[0]  # return 0 because there's only one JSON returned
 
     def get_url(self, app_type):
         if (app_type == "app"):
             return generate_url('142.150.208.177', self.GET_APPID, {})
 
+    def parse_app_id(self, app_json):
+        jsd = json.loads(app_json)
+        apps = []
+        for app in jsd:
+            app_dict = {}
+            # for every appid
+            for key, value in app.iteritems():
+                if key == 'id':
+                    app_dict['id'] = value
+                if key == 'attempts':
+                    app_dict['duration'] = str(value[0]['duration'])
+                    app_dict['start_time'] = value[0]['startTime']
+                    app_dict['end_time'] = value[0]['endTime']
+            apps.append(app_dict)
+        self.apps = apps
+        return apps
 
 class JobParser(AbstractParser):
     def __init__(self):

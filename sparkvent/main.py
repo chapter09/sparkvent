@@ -2,6 +2,7 @@ from resp_parse import *
 from os import path
 from config import Config
 
+import json
 
 def main():
     config = Config(path.abspath("../conf/config.yml")).conf
@@ -12,7 +13,26 @@ def main():
     a = app.get_basic_app_info()
     b = job.get_all_jobs_from_app('app-20170206013352-0006')
 
-    print a
+    jsd = json.loads(a[0])
+
+    apps = []
+
+    for app in jsd:
+        app_dict = {}
+        # for every appid
+        for key, value in app.iteritems():
+            if key == 'id':
+                app_dict['id'] = value
+            if key == 'attempts':
+                app_dict['duration'] = str(value[0]['duration'])
+                app_dict['start_time'] = value[0]['startTime']
+                app_dict['end_time'] = value[0]['endTime']
+        apps.append(app_dict)
+
+    print apps
+
+
+
 
 
 if __name__ == '__main__':
