@@ -4,6 +4,8 @@ from http_req import *
 
 
 class AbstractParser(object):
+    BASE_ENDPOINT = '/applications'
+
     def __init__(self):
         self.http_requester = http_req()
 
@@ -37,8 +39,20 @@ class JobParser(AbstractParser):
     def __init__(self):
         super(JobParser, self).__init__()
 
-    def get_url(self, app_type):
-        pass
+    def get_all_jobs_from_app(self, app_id):
+        endpoint = self.BASE_ENDPOINT + '/' + app_id + '/jobs'
+        jobs_info = self.get_info(endpoint)
+        return jobs_info
+
+    def get_job_from_app(self, app_id, job_id):
+        endpoint = self.BASE_ENDPOINT + '/' + app_id + '/jobs/' + job_id
+        job_info = self.get_info(endpoint)
+        return job_info
+
+    def get_info(self, endpoint):
+        request_url = generate_url('142.150.208.177', endpoint, {})
+        info = self.http_requester.single_request(request_url)
+        return info
 
 
 class StageParser(AbstractParser):
@@ -47,3 +61,18 @@ class StageParser(AbstractParser):
 
     def get_url(self, app_type):
         pass
+
+
+class ParserFactory(object):
+
+    @staticmethod
+    def get_parser(parser_type):
+        if parser_type == "App":
+            return AppParser()
+        elif parser_type == "Job":
+            return JobParser()
+        elif parser_type == "Stage":
+            return StageParser()
+        else:
+            return None
+
