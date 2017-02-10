@@ -5,6 +5,7 @@ from config import Config
 import json
 
 def main():
+
     config = Config(path.abspath("../conf/config.yml")).conf
 
     app = AbstractParser.factory("AppParser")
@@ -13,7 +14,7 @@ def main():
     a = app.get_basic_app_info()
     b = job.get_all_jobs_from_app('app-20170206013352-0006')
 
-    jsd = json.loads(a[0])
+    jsd = json.loads(a)
 
     apps = []
 
@@ -30,10 +31,6 @@ def main():
         apps.append(app_dict)
 
     print apps
-
-
-
-
 
 if __name__ == '__main__':
     main()
