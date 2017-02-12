@@ -6,8 +6,8 @@ period: 1 #second
 
 
 # Input
-spark-master: spark://xx:4000/
-history-server: spark://xx:xxxx/
+spark-master: spark://xx:4000
+history-server: 142.150.208.177:18080
 
 # Metrics
 app:

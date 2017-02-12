@@ -1,18 +1,19 @@
-from resp_parse import *
+from client import *
 from os import path
 from config import Config
 
 import json
 
+
 def main():
 
-    config = Config(path.abspath("../conf/config.yml")).conf
+    config = Config(path.abspath("../conf/config.yml"))
 
-    app = AbstractParser.factory("AppParser")
-    job = ParserFactory.get_parser("Job")
+    client = Client(config)
 
-    a = app.get_basic_app_info()
-    b = job.get_all_jobs_from_app('app-20170206013352-0006')
+    a = client.get_all_applications()
+
+    print a
 
     jsd = json.loads(a)
 
