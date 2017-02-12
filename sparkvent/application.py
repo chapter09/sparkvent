@@ -1,5 +1,6 @@
 class Application(object):
     def __init__(self):
+        self.id = ''
         self.duration = 0
         self.start_time = ''
         self.end_time = ''
