@@ -1,3 +1,6 @@
+import time
+from multiprocessing import Process
+
 from http_req import *
 from url_gen import *
 from resp_parse import *
@@ -53,9 +56,22 @@ class Client(object):
 
     def _get_data(self, rest_api, parser):
         url = self.url_gen.get_url(self.config.history_server, rest_api)
-        self.requester.add_url(url)
-        json_response = self.requester.make_request()
+        json_response = self.requester.single_request(url)
 
         #response = parser.parse_json(json_response)
         #return response
         return json_response
+
+    def store_info(self, ):
+        pass
+
+    def run_daemon(self):
+        process = Process(target=self._daemon_process())
+        process.start()
+        process.join()
+
+    def _daemon_process(self):
+        while True:
+            data = self.get_all_applications()
+            print data
+            time.sleep(self.config.period)
