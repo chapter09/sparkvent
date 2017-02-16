@@ -17,6 +17,8 @@ class Client(object):
         self.job_parser = JobParser()
         self.stage_parser = StageParser()
 
+        self.parse_type = ''  # used to inform the parser of parsing type
+
     # get all available info (apps, jobs, stages)
     def get_all_info(self):
         data = []
@@ -31,26 +33,31 @@ class Client(object):
 
     def get_all_applications(self):
         rest_api = ''
+        self.parse_type = 'appid'
         data = self._get_data(rest_api, self.app_parser)
         return data
 
     def get_all_jobs_from_application(self, app_id):
         rest_api = app_id + '/' + 'jobs'
+        self.parse_type = ''  # TODO: define a parse type
         data = self._get_data(rest_api, self.job_parser)
         return data
 
     def get_job_from_application(self, app_id, job_id):
         rest_api = app_id + '/' + 'jobs' + '/' + job_id
+        self.parse_type = ''  # TODO: define a parse type
         data = self._get_data(rest_api, self.job_parser)
         return data
 
     def get_all_stages_from_application(self, app_id):
         rest_api = app_id + '/' + 'stages'
+        self.parse_type = ''  # TODO: define a parse type
         data = self._get_data(rest_api, self.stage_parser)
         return data
 
     def get_stage_from_application(self, app_id, stage_id):
         rest_api = app_id + '/' + 'stages' + '/' + stage_id
+        self.parse_type = ''  # TODO: define a parse type
         data = self._get_data(rest_api, self.stage_parser)
         return data
 
@@ -58,11 +65,11 @@ class Client(object):
         url = self.url_gen.get_url(self.config.history_server, rest_api)
         json_response = self.requester.single_request(url)
 
-        #response = parser.parse_json(json_response)
-        #return response
-        return json_response
+        response = parser.parse_json(json_response, self.parse_type)
+        return response
+        # return json_response
 
-    def store_info(self, ):
+    def store_info(self):
         pass
 
     def run_daemon(self):

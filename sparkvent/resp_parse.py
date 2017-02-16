@@ -7,7 +7,7 @@ class AbstractParser(object):
     def __init__(self):
         pass
 
-    def parse_json(self, job_json):
+    def parse_json(self, job_json, parse_type):
         pass
 
     @staticmethod
@@ -22,8 +22,9 @@ class AppParser(AbstractParser):
         super(AppParser, self).__init__()
         self.apps = []
 
-    def parse_json(self, app_json):
-        pass
+    def parse_json(self, app_json, parse_type):
+        if parse_type == 'appid':
+            return self.parse_app_id(app_json)
 
     def parse_app_id(self, app_json):
         jsd = json.loads(app_json)
@@ -47,7 +48,7 @@ class JobParser(AbstractParser):
     def __init__(self):
         super(JobParser, self).__init__()
 
-    def parse_json(self, job_json):
+    def parse_json(self, job_json, parse_type):
         pass
 
 
@@ -55,7 +56,7 @@ class StageParser(AbstractParser):
     def __init__(self):
         super(StageParser, self).__init__()
 
-    def parse_json(self, stage_json):
+    def parse_json(self, stage_json, parse_type):
         pass
 
     def get_url(self, app_type):
