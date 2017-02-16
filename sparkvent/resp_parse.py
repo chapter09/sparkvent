@@ -1,6 +1,6 @@
 # HTTP response (JSON) parser
 import json
-
+from application import *
 
 class AbstractParser(object):
 
@@ -49,8 +49,33 @@ class JobParser(AbstractParser):
         super(JobParser, self).__init__()
 
     def parse_json(self, job_json, parse_type):
-        pass
+        if parse_type == 'jobid':
+            return self.parse_jobid(job_json)
+        return None
 
+    def parse_jobid(self, job_json):
+        jsd = json.loads(job_json)
+        jobs = []
+
+        for job in jsd:
+            new_job = Job()
+            new_job.id                   = job['jobId']
+            new_job.submission_time      = job['submissionTime']
+            new_job.completion_time      = job['completionTime']
+            new_job.stage_ids            = job['stageIds']
+            new_job.status               = job['status'] == 'SUCCEEDED'
+            new_job.num_tasks            = job['numTasks']
+            new_job.num_active_tasks     = job['numActiveTasks']
+            new_job.num_completed_tasks  = job['numCompletedTasks']
+            new_job.num_skipped_tasks    = job['numSkippedTasks']
+            new_job.num_failed_tasks     = job['numFailedTasks']
+            new_job.num_active_stages    = job['numActiveStages']
+            new_job.num_completed_stages = job['numCompletedStages']
+            new_job.num_skipped_stages   = job['numSkippedStages']
+            new_job.num_failed_stages    = job['numFailedStages']
+
+            jobs.append(new_job)
+        return jobs
 
 class StageParser(AbstractParser):
     def __init__(self):

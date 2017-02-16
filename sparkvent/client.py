@@ -18,17 +18,19 @@ class Client(object):
         self.stage_parser = StageParser()
 
         self.parse_type = ''  # used to inform the parser of parsing type
+        self.data = []
 
     # get all available info (apps, jobs, stages)
     def get_all_info(self):
         data = []
         entry = {'application': None, 'jobs': None, 'stages': None}
-        apps = self.get_all_applications()
+        apps = self.get_all_applications()  # get all app ids
         for app in apps:
             entry['application'] = app
-            entry['jobs'] = self.get_all_jobs_from_application(app.id)
+            entry['jobs'] = self.get_all_jobs_from_application(app.id, app)
             entry['stages'] = self.get_all_stages_from_application(app.id)
             data.append(entry)
+        self.data.append(data)  # add to global data storage
         return data
 
     def get_all_applications(self):
@@ -37,10 +39,11 @@ class Client(object):
         data = self._get_data(rest_api, self.app_parser)
         return data
 
-    def get_all_jobs_from_application(self, app_id):
+    def get_all_jobs_from_application(self, app_id, application):
         rest_api = app_id + '/' + 'jobs'
-        self.parse_type = ''  # TODO: define a parse type
+        self.parse_type = 'jobid'
         data = self._get_data(rest_api, self.job_parser)
+        application.jobs = data
         return data
 
     def get_job_from_application(self, app_id, job_id):
