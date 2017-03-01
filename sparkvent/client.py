@@ -39,10 +39,15 @@ class Client(object):
         data = self._get_data(rest_api, self.app_parser)
         return data
 
-    def get_all_jobs_from_application(self, app_id, application):
+    def get_all_jobs_from_application(self, app_id, application, status=''):
         rest_api = app_id + '/' + 'jobs'
         self.parse_type = 'jobid'
-        data = self._get_data(rest_api, self.job_parser)
+
+        # get the options
+        if status: option = {'status' : status}
+        else: option = {}
+
+        data = self._get_data(rest_api, self.job_parser, option)
         application.jobs = data
         return data
 
@@ -52,20 +57,33 @@ class Client(object):
         data = self._get_data(rest_api, self.job_parser)
         return data
 
-    def get_all_stages_from_application(self, app_id):
+    def get_all_stages_from_application(self, app_id, status=''):
         rest_api = app_id + '/' + 'stages'
-        self.parse_type = ''  # TODO: define a parse type
-        data = self._get_data(rest_api, self.stage_parser)
+        self.parse_type = 'stageid'
+
+        # get the options
+        if status: option = {'status' : status}
+        else: option = {}
+
+        data = self._get_data(rest_api, self.stage_parser, option)
         return data
 
-    def get_stage_from_application(self, app_id, stage_id):
+    def get_attempts_for_stage_from_application(self, app_id, stage_id):
         rest_api = app_id + '/' + 'stages' + '/' + stage_id
-        self.parse_type = ''  # TODO: define a parse type
+        self.parse_type = 'attemptid'
+
         data = self._get_data(rest_api, self.stage_parser)
         return data
 
-    def _get_data(self, rest_api, parser):
-        url = self.url_gen.get_url(self.config.history_server, rest_api)
+    def get_attempt_from_stage(self, app_id, stage_id, attempt_id):
+        rest_api = '/'.join([app_id, 'stages', stage_id, attempt_id])
+        self.parse_type = 'attemptdetail'
+
+        data = self._get_data(rest_api, self.stage_parser)
+        return data
+
+    def _get_data(self, rest_api, parser, option={}):
+        url = self.url_gen.get_url(self.config.history_server, rest_api, option)
         json_response = self.requester.single_request(url)
 
         response = parser.parse_json(json_response, self.parse_type)

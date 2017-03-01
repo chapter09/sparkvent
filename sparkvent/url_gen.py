@@ -32,6 +32,8 @@ class UrlGen(object):
         :rtype:str
         >>> option = {'status': 'suspended', 'method': 'get'}
         >>> get_option_string(option)
-        'status=suspended&method=get'
+        '?status=suspended&method=get'
         """
-        return '&'.join(key + "=" + option[key] for key in option.keys())
+        if option:
+            return '?' + '&'.join(key + "=" + option[key] for key in option.keys())
+        return ''

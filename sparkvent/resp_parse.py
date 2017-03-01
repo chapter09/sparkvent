@@ -82,6 +82,16 @@ class StageParser(AbstractParser):
         super(StageParser, self).__init__()
 
     def parse_json(self, stage_json, parse_type):
+        if parse_type == 'stageid':
+            return self.parse_stage_id(stage_json)
+        elif parse_type == 'attemptid':
+            return self.parse_attempt_id(attempt_json=stage_json)
+        return None
+
+    def parse_stage_id(self, stage_json):
+        pass
+
+    def parse_attempt_id(self, attempt_json):
         pass
 
     def get_url(self, app_type):
