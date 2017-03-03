@@ -1,4 +1,5 @@
 import time
+import redis
 from multiprocessing import Process
 from os import path
 from config import Config
@@ -21,6 +22,9 @@ class Client(object):
 
         self.parse_type = ''  # used to inform the parser of parsing type
         self.data = []
+
+        redis_host, redis_port = self.config.redis.split(":")
+        self.redis = redis.Redis(host=redis_host, port=redis_port)
 
     # get all available info (apps, jobs, stages)
     def get_all_info(self):
@@ -95,8 +99,16 @@ class Client(object):
         return response
         # return json_response
 
-    def store_info(self):
-        pass
+    # Redis structure
+    # key: app_id           value: "json"
+    # key: app_id:job_id    value: "json"
+    # key: app_id:stage_id  value: "json"
+    # data = { "key1": "value", "key2": "value", ... }
+    def store_info(self, data):
+
+        self.redis.mset(data)
+        result = self.redis.mget(data)
+        print(result)
 
     def run_daemon(self):
         process = Process(target=self._daemon_process())

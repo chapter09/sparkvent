@@ -9,14 +9,14 @@ def main():
 
     client = Client("../conf/config.yml")
 
-    a = client.get_all_applications()
-
-    print a
-
-    a = client.get_all_jobs_from_application('app-20170206013352-0006')
+    maps = {
+        "3": "c",
+    }
+    client.store_info(maps)
 
     client.get_all_info()
 
+    a = client.get_all_jobs_from_application('app-20170206013352-0006')
     jsd = json.loads(a)
 
     apps = []
@@ -34,6 +34,7 @@ def main():
         apps.append(app_dict)
 
     print apps
+
 
 if __name__ == '__main__':
     main()
