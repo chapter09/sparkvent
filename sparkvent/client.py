@@ -1,5 +1,7 @@
 import time
 from multiprocessing import Process
+from os import path
+from config import Config
 
 from http_req import *
 from url_gen import *
@@ -9,8 +11,8 @@ from resp_parse import *
 # need to make a thread to query periodically
 class Client(object):
 
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, config_file):
+        self.config = Config(path.abspath(config_file))
         self.url_gen = UrlGen()
         self.requester = HttpRequester()
         self.app_parser = AppParser()

@@ -7,9 +7,7 @@ import json
 
 def main():
 
-    config = Config(path.abspath("../conf/config.yml"))
-
-    client = Client(config)
+    client = Client("../conf/config.yml")
 
     a = client.get_all_applications()
 
