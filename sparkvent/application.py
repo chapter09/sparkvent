@@ -28,5 +28,8 @@ class Job(object):
 
 class Stage(object):
     def __init__(self):
-        pass
+        self.id = 0
+        self.num_active_tasks = 0
+        self.num_completed_tasks = 0
+        self.num_failed_tasks = 0
 

@@ -17,6 +17,8 @@ def main():
 
     a = client.get_all_jobs_from_application('app-20170206013352-0006')
 
+    client.get_all_info()
+
     jsd = json.loads(a)
 
     apps = []

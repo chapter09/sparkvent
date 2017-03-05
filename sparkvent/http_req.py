@@ -34,7 +34,7 @@ class HttpRequester(object):
             response = urllib2.urlopen(req)
             return address, response.read(), None
         except urllib2.URLError as e:
-            print e.reason
+            print '[ERROR] Server returned:' + e.reason
             return address, None, e
 
     def single_request(self, address):

@@ -9,7 +9,7 @@ class UrlGen(object):
 
     def get_url(self, host, rest_api='', options={}):
         if not host:
-            host = '142.150.208.177:18080'
+            host = '142.150.208.147:18080'
 
         url = 'http://' + host + self.BASE_ENDPOINT + self.get_rest_endpoint(rest_api) + self.get_option_string(options)
         return url

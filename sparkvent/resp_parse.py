@@ -89,7 +89,18 @@ class StageParser(AbstractParser):
         return None
 
     def parse_stage_id(self, stage_json):
-        pass
+        jsd = json.loads(stage_json)
+        stages = []
+
+        for stage in jsd:
+            new_stage = Stage()
+            new_stage.id = stage['stageId']
+            new_stage.num_active_tasks = stage['numActiveTasks']
+            new_stage.num_completed_tasks = stage['numCompleteTasks']
+            new_stage.num_failed_tasks = stage['numFailedTasks']
+            stages.append(new_stage)
+
+        return stages
 
     def parse_attempt_id(self, attempt_json):
         pass

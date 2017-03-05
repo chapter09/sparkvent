@@ -27,8 +27,8 @@ class Client(object):
         apps = self.get_all_applications()  # get all app ids
         for app in apps:
             entry['application'] = app
-            entry['jobs'] = self.get_all_jobs_from_application(app.id, app)
-            entry['stages'] = self.get_all_stages_from_application(app.id)
+            entry['jobs'] = self.get_all_jobs_from_application(app['id'], app)
+            entry['stages'] = self.get_all_stages_from_application(app['id'])
             data.append(entry)
         self.data.append(data)  # add to global data storage
         return data
@@ -39,7 +39,7 @@ class Client(object):
         data = self._get_data(rest_api, self.app_parser)
         return data
 
-    def get_all_jobs_from_application(self, app_id, application, status=''):
+    def get_all_jobs_from_application(self, app_id, application=None, status=''):
         rest_api = app_id + '/' + 'jobs'
         self.parse_type = 'jobid'
 
@@ -48,7 +48,7 @@ class Client(object):
         else: option = {}
 
         data = self._get_data(rest_api, self.job_parser, option)
-        application.jobs = data
+        # application.jobs = data
         return data
 
     def get_job_from_application(self, app_id, job_id):
@@ -68,6 +68,9 @@ class Client(object):
         data = self._get_data(rest_api, self.stage_parser, option)
         return data
 
+    def get_all_attempts_from_stage(self, app_id):
+        pass
+
     def get_attempts_for_stage_from_application(self, app_id, stage_id):
         rest_api = app_id + '/' + 'stages' + '/' + stage_id
         self.parse_type = 'attemptid'
@@ -75,7 +78,7 @@ class Client(object):
         data = self._get_data(rest_api, self.stage_parser)
         return data
 
-    def get_attempt_from_stage(self, app_id, stage_id, attempt_id):
+    def get_attempt_detail_for_stage_from_stage(self, app_id, stage_id, attempt_id):
         rest_api = '/'.join([app_id, 'stages', stage_id, attempt_id])
         self.parse_type = 'attemptdetail'
 
