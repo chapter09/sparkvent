@@ -39,10 +39,10 @@ class Client(object):
         self.data.append(data)  # add to global data storage
         return data
 
-    def get_all_applications(self):
+    def get_all_applications(self, option={}):
         rest_api = ''
         self.parse_type = 'appid'
-        data = self._get_data(rest_api, self.app_parser)
+        data = self._get_data(rest_api, self.app_parser, option)
         return data
 
     def get_all_jobs_from_application(self, app_id, application=None, status=''):
@@ -95,9 +95,12 @@ class Client(object):
         url = self.url_gen.get_url(self.config.history_server, rest_api, option)
         json_response = self.requester.single_request(url)
 
-        response = parser.parse_json(json_response, self.parse_type)
+        if option == {}:
+            response = parser.parse_json(json_response, self.parse_type)
+        elif option['type'] == 'redis':
+            response = parser.get_redis_entry(json_response)
+
         return response
-        # return json_response
 
     # Redis structure
     # key: app_id           value: "json"
@@ -117,6 +120,6 @@ class Client(object):
 
     def _daemon_process(self):
         while True:
-            data = self.get_all_applications()
-            print data
+            all_apps = self.get_all_applications({'type': 'redis'})
+            self.store_info(all_apps)
             time.sleep(self.config.period)

@@ -1,13 +1,17 @@
 ## Config file
 
 # General
-period: 1 #second
+period: 5 #second
 
 
 
 # Input
 spark-master: spark://xx:4000
 history-server: 142.150.208.147:18080
+
+# Parser type
+# app/job/stage/task
+type: app
 
 # Metrics
 app:

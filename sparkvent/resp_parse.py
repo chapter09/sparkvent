@@ -10,10 +10,14 @@ class AbstractParser(object):
     def parse_json(self, job_json, parse_type):
         pass
 
+    def get_redis_entry(self, app_json):
+        pass
+
     @staticmethod
     def get_parser(parser_type):
         if parser_type == "AppParser": return AppParser()
         if parser_type == "JobParser": return JobParser()
+        if parser_type == "StageParser": return StageParser()
 
 
 class AppParser(AbstractParser):
@@ -25,6 +29,19 @@ class AppParser(AbstractParser):
     def parse_json(self, app_json, parse_type):
         if parse_type == 'appid':
             return self.parse_app_id(app_json)
+
+    def get_redis_entry(self, app_json):
+        jsd = json.loads(app_json)
+        entries = {}
+        for app in jsd:
+            entry_key = app['id']
+            entry_value = {
+                'duration': str(app['attempts'][0]['duration']),
+                'start_time': app['attempts'][0]['startTime'],
+                'end_time': app['attempts'][0]['startTime'],
+            }
+            entries[entry_key] = entry_value
+        return entries
 
     def parse_app_id(self, app_json):
         jsd = json.loads(app_json)
