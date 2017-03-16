@@ -90,3 +90,7 @@ ENV/
 
 # IDE
 .idea
+
+
+arch.monopic
+
