@@ -9,6 +9,8 @@ def main():
 
     client = Client("../conf/config.yml")
 
+    asdf = client.get_all_info()
+
     all_apps = client.get_all_applications({'type': 'redis'})
     client.store_info(all_apps)
 

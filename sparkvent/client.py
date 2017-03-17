@@ -29,13 +29,14 @@ class Client(object):
     # get all available info (apps, jobs, stages)
     def get_all_info(self):
         data = []
-        entry = {'application': None, 'jobs': None, 'stages': None}
         apps = self.get_all_applications()  # get all app ids
         for app in apps:
+            entry = {'application': None, 'jobs': None, 'stages': None}
             entry['application'] = app
-            entry['jobs'] = self.get_all_jobs_from_application(app['id'], app)
+            entry['jobs'] = self.get_all_jobs_from_application(app['id'])
             entry['stages'] = self.get_all_stages_from_application(app['id'])
             data.append(entry)
+
         self.data.append(data)  # add to global data storage
         return data
 
@@ -45,7 +46,7 @@ class Client(object):
         data = self._get_data(rest_api, self.app_parser, option)
         return data
 
-    def get_all_jobs_from_application(self, app_id, application=None, status=''):
+    def get_all_jobs_from_application(self, app_id, status=''):
         rest_api = app_id + '/' + 'jobs'
         self.parse_type = 'jobid'
 
