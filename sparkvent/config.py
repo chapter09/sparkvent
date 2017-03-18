@@ -7,8 +7,11 @@ class Config(object):
         try:
             with open(conf_path, 'r') as cfg_fd:
                 conf = yaml.load(cfg_fd)
-                self.spark_master = conf['spark-master']
-                self.history_server = conf['history-server']
+
+                if conf['mode'] == 'active':
+                    self.server = conf['spark-master']
+                elif conf['mode'] == 'history':
+                    self.server = conf['history-server']
                 self.period = conf['period']
                 self.redis = conf['redis']
                 self.type = conf['type']

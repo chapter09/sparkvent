@@ -17,10 +17,10 @@ class AbstractParser(object):
     def get_data(self):
         pass
 
-    def _get_json_data(self, rest_api):
+    def _get_response(self, rest_api):
         url = self.url_gen.get_url(self.server, rest_api)
-        json_response = self.requester.single_request(url)
-        return json_response
+        json_string = self.requester.single_request(url)
+        return json_string
 
 
 class AppParser(AbstractParser):
@@ -66,8 +66,8 @@ class AppParser(AbstractParser):
 
     def get_data(self):
         rest_api = ''
-        json_response = self._get_json_data(rest_api)
-        response = self.parse_json_redis(json_response)
+        json_string = self._get_response(rest_api)
+        response = self.parse_json_redis(json_string)
         return response
 
 
@@ -139,8 +139,8 @@ class JobParser(AbstractParser):
         for app in apps.values():
             app_id = app['id']
             rest_api = self.get_rest_api(app_id)
-            json_response = self._get_json_data(rest_api)
-            response.update(self.parse_json_redis(json_response, app_id))
+            json_string = self._get_response(rest_api)
+            response.update(self.parse_json_redis(json_string, app_id))
         return response
 
 
@@ -201,8 +201,8 @@ class StageParser(AbstractParser):
         for app in apps.values():
             app_id = app['id']
             rest_api = self.get_rest_api(app_id)
-            json_response = self._get_json_data(rest_api)
-            response.update(self.parse_json_redis(json_response, app_id))
+            json_string = self._get_response(rest_api)
+            response.update(self.parse_json_redis(json_string, app_id))
         return response
 
 
@@ -238,8 +238,8 @@ class TaskParser(AbstractParser):
             app_id = key.split(':')[0]
             stage_id = str(stage['stageId'])
             rest_api = self.get_rest_api(app_id, stage_id)
-            json_response = self._get_json_data(rest_api)
-            response = self.parse_json_redis(json_response, app_id, stage_id)
+            json_string = self._get_response(rest_api)
+            response = self.parse_json_redis(json_string, app_id, stage_id)
             all_response.update(response)
         return all_response
 

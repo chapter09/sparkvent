@@ -7,7 +7,7 @@ period: 5 #second
 spark-master: 142.150.208.147:4040
 history-server: 142.150.208.147:18080
 
-# Server: running/history
+# Server: active/history
 mode: history
 
 # Parser type: app/job/stage/task
