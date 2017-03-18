@@ -1,47 +1,37 @@
 # HTTP response (JSON) parser
 import json
 from application import *
+from http_req import *
+from url_gen import *
+
 
 class AbstractParser(object):
+    def __init__(self, server):
+        self.server = server
+        self.url_gen = UrlGen()
+        self.requester = HttpRequester()
 
-    def __init__(self):
+    def parse_json(self, json_input, parse_type):
         pass
 
-    def parse_json(self, job_json, parse_type):
+    def get_data(self):
         pass
 
-    def get_redis_entry(self, app_json):
-        pass
-
-    @staticmethod
-    def get_parser(parser_type):
-        if parser_type == "AppParser": return AppParser()
-        if parser_type == "JobParser": return JobParser()
-        if parser_type == "StageParser": return StageParser()
+    def _get_json_data(self, rest_api):
+        url = self.url_gen.get_url(self.server, rest_api)
+        json_response = self.requester.single_request(url)
+        return json_response
 
 
 class AppParser(AbstractParser):
 
-    def __init__(self):
-        super(AppParser, self).__init__()
+    def __init__(self, server):
+        super(AppParser, self).__init__(server)
         self.apps = []
 
     def parse_json(self, app_json, parse_type):
         if parse_type == 'appid':
             return self.parse_app_id(app_json)
-
-    def get_redis_entry(self, app_json):
-        jsd = json.loads(app_json)
-        entries = {}
-        for app in jsd:
-            entry_key = app['id']
-            entry_value = {
-                'duration': str(app['attempts'][0]['duration']),
-                'start_time': app['attempts'][0]['startTime'],
-                'end_time': app['attempts'][0]['startTime'],
-            }
-            entries[entry_key] = entry_value
-        return entries
 
     def parse_app_id(self, app_json):
         jsd = json.loads(app_json)
@@ -60,10 +50,31 @@ class AppParser(AbstractParser):
         self.apps = apps
         return apps
 
+    def parse_json_redis(self, json_input):
+        jsd = json.loads(json_input)
+        entries = {}
+        for app in jsd:
+            entry_key = app['id']
+            entry_value = {
+                'id': app['id'],
+                'duration': str(app['attempts'][0]['duration']),
+                'start_time': app['attempts'][0]['startTime'],
+                'end_time': app['attempts'][0]['startTime'],
+            }
+            entries[entry_key] = entry_value
+        return entries
+
+    def get_data(self):
+        rest_api = ''
+        json_response = self._get_json_data(rest_api)
+        response = self.parse_json_redis(json_response)
+        return response
+
 
 class JobParser(AbstractParser):
-    def __init__(self):
-        super(JobParser, self).__init__()
+    def __init__(self, server):
+        super(JobParser, self).__init__(server)
+        self.app_parser = AppParser(server)
 
     def parse_json(self, job_json, parse_type):
         if parse_type == 'jobid':
@@ -94,9 +105,49 @@ class JobParser(AbstractParser):
             jobs.append(new_job)
         return jobs
 
+    def parse_json_redis(self, json_input, app_id):
+        entries = {}
+        jsd = json.loads(json_input)
+        for job in jsd:
+            entry_key = app_id + ':jobs:' + str(job['jobId'])
+            entry_value = {
+                'jobId': job['jobId'],
+                'submissionTime': job['submissionTime'],
+                'completionTime': job['completionTime'],
+                'stageIds': job['stageIds'],
+                'status': job['status'],
+                'numTasks': job['numTasks'],
+                'numActiveTasks': job['numActiveTasks'],
+                'numCompletedTasks': job['numCompletedTasks'],
+                'numSkippedTasks': job['numSkippedTasks'],
+                'numFailedTasks': job['numFailedTasks'],
+                'numActiveStages': job['numActiveStages'],
+                'numCompletedStages': job['numCompletedStages'],
+                'numSkippedStages': job['numSkippedStages'],
+                'numFailedStages': job['numFailedStages'],
+            }
+            entries[entry_key] = entry_value
+        return entries
+
+    def get_rest_api(self, app_id):
+        rest_api = app_id + '/' + 'jobs'
+        return rest_api
+
+    def get_data(self):
+        apps = self.app_parser.get_data()
+        response = {}
+        for app in apps.values():
+            app_id = app['id']
+            rest_api = self.get_rest_api(app_id)
+            json_response = self._get_json_data(rest_api)
+            response.update(self.parse_json_redis(json_response, app_id))
+        return response
+
+
 class StageParser(AbstractParser):
-    def __init__(self):
-        super(StageParser, self).__init__()
+    def __init__(self, server):
+        super(StageParser, self).__init__(server)
+        self.app_parser = AppParser(server)
 
     def parse_json(self, stage_json, parse_type):
         if parse_type == 'stageid':
@@ -122,5 +173,89 @@ class StageParser(AbstractParser):
     def parse_attempt_id(self, attempt_json):
         pass
 
-    def get_url(self, app_type):
+    def parse_json_redis(self, json_input, app_id):
+        entries = {}
+        jsd = json.loads(json_input)
+        for stage in jsd:
+            entry_key = app_id + ':stages:' + str(stage['stageId'])
+            entry_value = {
+                'stageId': stage['stageId'],
+                'status': stage['status'],
+                'attemptId': stage['attemptId'],
+                'submissionTime': stage['submissionTime'],
+                'completionTime': stage['completionTime'],
+                'numActiveTasks': stage['numActiveTasks'],
+                'numCompleteTasks': stage['numCompleteTasks'],
+                'numFailedTasks': stage['numFailedTasks'],
+            }
+            entries[entry_key] = entry_value
+        return entries
+
+    def get_rest_api(self, app_id):
+        rest_api = app_id + '/' + 'stages'
+        return rest_api
+
+    def get_data(self):
+        apps = self.app_parser.get_data()
+        response = {}
+        for app in apps.values():
+            app_id = app['id']
+            rest_api = self.get_rest_api(app_id)
+            json_response = self._get_json_data(rest_api)
+            response.update(self.parse_json_redis(json_response, app_id))
+        return response
+
+
+class TaskParser(AbstractParser):
+    def __init__(self, server):
+        super(TaskParser, self).__init__(server)
+        self.stage_parser = StageParser(server)
+
+    def parse_json(self, json_input, parse_type):
         pass
+
+    def parse_json_redis(self, json_input, app_id, stage_id):
+        entries = {}
+        jsd = json.loads(json_input)[0]['tasks']
+        for task in jsd.values():
+            entry_key = app_id + ':stages:' + stage_id + ':tasks:' + str(task['taskId'])
+            entry_value = {
+                'taskId': task['taskId'],
+                'attempt': task['attempt'],
+                'launchTime': task['launchTime'],
+                'executorId': task['executorId'],
+                'host': task['host'],
+                'taskLocality': task['taskLocality'],
+                'taskMetrics': task['taskMetrics'],
+            }
+            entries[entry_key] = entry_value
+        return entries
+
+    def get_data(self):
+        stages = self.stage_parser.get_data()
+        all_response = {}
+        for key, stage in stages.iteritems():
+            app_id = key.split(':')[0]
+            stage_id = str(stage['stageId'])
+            rest_api = self.get_rest_api(app_id, stage_id)
+            json_response = self._get_json_data(rest_api)
+            response = self.parse_json_redis(json_response, app_id, stage_id)
+            all_response.update(response)
+        return all_response
+
+    def get_rest_api(self, app_id, stage_id):
+        rest_api = app_id + '/' + 'stages' + '/' + stage_id
+        return rest_api
+
+
+class ParserFactory(object):
+    parser_types = {'app', 'job', 'stage', 'task'}
+
+    @staticmethod
+    def get_parser(parser_type, server):
+        if parser_type not in ParserFactory.parser_types:
+            raise Exception("Unknown parser type!")
+        if parser_type == "app": return AppParser(server)
+        elif parser_type == "job": return JobParser(server)
+        elif parser_type == "stage": return StageParser(server)
+        elif parser_type == "task": return TaskParser(server)

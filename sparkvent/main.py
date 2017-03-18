@@ -1,18 +1,16 @@
 from client import *
-from os import path
-from config import Config
-
-import json
 
 
 def main():
 
     client = Client("../conf/config.yml")
 
-    asdf = client.get_all_info()
+    #asdf = client.get_all_info()
 
-    all_apps = client.get_all_applications({'type': 'redis'})
-    client.store_info(all_apps)
+    parser = ParserFactory.get_parser('stage', client.config.history_server)
+    data = parser.get_data()
+    print data
+    client.store_info(data)
 
 
 if __name__ == '__main__':
