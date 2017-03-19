@@ -16,9 +16,12 @@ class Client(object):
         self.config = Config(path.abspath(config_file))
         self.url_gen = UrlGen()
         self.requester = HttpRequester()
-        self.app_parser = AppParser()
-        self.job_parser = JobParser()
-        self.stage_parser = StageParser()
+        self.app_parser = AppParser(self.config.server)
+        self.job_parser = JobParser(self.config.server)
+        self.stage_parser = StageParser(self.config.server)
+
+        # Get parser from config
+        self.parser = ParserFactory.get_parser(self.config.type, self.config.server)
 
         self.parse_type = ''  # used to inform the parser of parsing type
         self.data = []
