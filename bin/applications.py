@@ -7,7 +7,7 @@ def main():
 
     #asdf = client.get_all_info()
 
-    parser = ParserFactory.get_parser('stage', client.config.history_server)
+    parser = ParserFactory.get_parser('stage', client.config.server)
     data = parser.get_data()
     print data
     client.store_info(data)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys
+import sys, os
 sys.path.insert(0, '../sparkvent')
 
 from sparkvent.client import *
@@ -40,7 +40,10 @@ def get_task_count_for_all_apps(entries):
 
 def output_csv(task_count):
     # task_count is the data output by get_task_count_for_all_apps
-    with open('mycsvfile.csv', 'wb') as f:  # Just use 'w' mode in 3.x
+    if not os.path.exists("../output/"):
+        os.mkdir("../output/")
+
+    with open('../output/mycsvfile.csv', 'wb') as f:  # Just use 'w' mode in 3.x
         writer = csv.writer(f)
         writer.writerow(["ID", "Active", "Finished", "Failed"])
         for key, value in task_count.items():
