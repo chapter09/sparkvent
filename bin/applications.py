@@ -1,4 +1,4 @@
-from client import *
+from sparkvent.client import *
 
 
 def main():
