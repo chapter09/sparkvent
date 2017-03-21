@@ -12,6 +12,9 @@ class Config(object):
                     self.server = conf['spark-master']
                 elif conf['mode'] == 'history':
                     self.server = conf['history-server']
+                else:
+                    self.server = conf['history-server']
+
                 self.period = conf['period']
                 self.redis = conf['redis']
                 self.type = conf['type']

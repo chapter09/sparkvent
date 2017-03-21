@@ -92,5 +92,9 @@ ENV/
 .idea
 
 
+# runtime
+output
+conf/config.yml
+
 arch.monopic
 

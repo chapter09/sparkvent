@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
 import sys
+import os
 sys.path.insert(0, '../sparkvent')
 
 from sparkvent.client import *
 from sparkvent.config import Config
 import csv
 
+ROOT_DIR = os.path.realpath(__file__)
 
 def main():
     client = Client("../conf/config.yml")
@@ -40,7 +42,10 @@ def get_task_count_for_all_apps(entries):
 
 def output_csv(task_count):
     # task_count is the data output by get_task_count_for_all_apps
-    with open('mycsvfile.csv', 'wb') as f:  # Just use 'w' mode in 3.x
+    if not os.path.exists("../output/"):
+        os.mkdir("../output/")
+
+    with open('../output/mycsvfile.csv', 'wb') as f:  # Just use 'w' mode in 3.x
         writer = csv.writer(f)
         writer.writerow(["ID", "Active", "Finished", "Failed"])
         for key, value in task_count.items():

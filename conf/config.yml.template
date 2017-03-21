@@ -4,7 +4,7 @@
 period: 5 #second
 
 # Input
-# spark-master: 142.150.208.147:4040
+spark-master: 142.150.208.147:4040
 history-server: 142.150.208.147:18080
 
 # Server: active/history
