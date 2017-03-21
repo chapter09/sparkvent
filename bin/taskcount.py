@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-import sys, os
+import sys
+import os
 sys.path.insert(0, '../sparkvent')
 
 from sparkvent.client import *
 from sparkvent.config import Config
 import csv
 
+ROOT_DIR = os.path.realpath(__file__)
 
 def main():
     client = Client("../conf/config.yml")

@@ -21,7 +21,8 @@ class Client(object):
         self.stage_parser = StageParser(self.config.server)
 
         # Get parser from config
-        self.parser = ParserFactory.get_parser(self.config.type, self.config.server)
+        self.parser = ParserFactory.get_parser(self.config.type,
+                                               self.config.server)
 
         self.parse_type = ''  # used to inform the parser of parsing type
         self.data = []
@@ -34,7 +35,7 @@ class Client(object):
         data = []
         apps = self.get_all_applications()  # get all app ids
         for app in apps:
-            entry = {'application': None, 'jobs': None, 'stages': None}
+            entry = dict()
             entry['application'] = app
             entry['jobs'] = self.get_all_jobs_from_application(app['id'])
             entry['stages'] = self.get_all_stages_from_application(app['id'])
@@ -103,6 +104,8 @@ class Client(object):
             response = parser.parse_json(json_response, self.parse_type)
         elif option['type'] == 'redis':
             response = parser.get_redis_entry(json_response)
+        else:
+            response = parser.parse_json(json_response, self.parse_type)
 
         return response
 
