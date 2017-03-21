@@ -96,7 +96,7 @@ class Client(object):
         return data
 
     def _get_data(self, rest_api, parser, option={}):
-        url = self.url_gen.get_url(self.config.history_server, rest_api, option)
+        url = self.url_gen.get_url(self.config.server, rest_api, option)
         json_response = self.requester.single_request(url)
 
         if option == {}:
