@@ -92,5 +92,8 @@ ENV/
 .idea
 
 
+# output
+output
+
 arch.monopic
 
