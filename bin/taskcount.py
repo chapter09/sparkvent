@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
+import sys
+import os
+
+sys.path.insert(0, '../sparkvent')
 from sparkvent.client import *
 from sparkvent.config import Config
 import csv
-
-import sys
-import os
-sys.path.insert(0, '../sparkvent')
 
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
