@@ -1,8 +1,10 @@
+#!/usr/bin/python
+
 import sys
 sys.path.insert(0, '../sparkvent')
 
-from client import *
-from config import Config
+from sparkvent.client import *
+from sparkvent.config import Config
 import csv
 
 

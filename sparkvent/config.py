@@ -15,5 +15,5 @@ class Config(object):
                 self.period = conf['period']
                 self.redis = conf['redis']
                 self.type = conf['type']
-        except FileNotFoundError as e:
+        except IOError as e:
             print(e)
