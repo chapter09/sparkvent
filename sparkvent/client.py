@@ -19,6 +19,7 @@ class Client(object):
         self.app_parser = AppParser(self.config.server)
         self.job_parser = JobParser(self.config.server)
         self.stage_parser = StageParser(self.config.server)
+        self.exec_parser = ExecParser(self.config.server)
 
         # Get parser from config
         self.parser = ParserFactory.get_parser(self.config.type,
@@ -43,6 +44,22 @@ class Client(object):
 
         self.data.append(data)  # add to global data storage
         return data
+
+
+    def get_executor_info(self):
+        data = []
+        apps = self.get_all_applications()  # get all app ids
+
+        for app in apps:
+            entry = dict()
+            entry['application'] = app
+            entry['executor'] = self.get_executor_details(app['id'])
+            data.append(entry)
+
+        return data
+
+    #############################################################################
+    ## methods for single aspect
 
     def get_all_applications(self, option={}):
         rest_api = ''
@@ -95,6 +112,14 @@ class Client(object):
 
         data = self._get_data(rest_api, self.stage_parser)
         return data
+
+    def get_executor_details(self, app_id):
+        rest_api = '/'.join([app_id, 'executors'])
+
+        data = self._get_data(rest_api, self.exec_parser)
+
+        return data
+
 
     def _get_data(self, rest_api, parser, option={}):
         url = self.url_gen.get_url(self.config.server, rest_api, option)

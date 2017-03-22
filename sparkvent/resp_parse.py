@@ -245,15 +245,45 @@ class TaskParser(AbstractParser):
         rest_api = app_id + '/' + 'stages' + '/' + stage_id
         return rest_api
 
+class ExecParser(AbstractParser):
+    def __init__(self, server):
+        super(ExecParser, self).__init__(server)
+
+    def parse_json(self, json_input, parse_type):
+        # parse the executor json
+        # not storing the info anymore
+        jsd = json.loads(json_input)
+        result = []
+
+        for executor in jsd:
+            if executor['id'] == 'driver':
+                # not dealing with drivers here
+                continue
+            # not driver, drop many keys
+            executor.pop('diskUsed', None)
+            executor.pop('executorLogs', None)
+            executor.pop('rddBlocks', None)
+            executor.pop('maxMemory', None)
+            executor.pop('totalTasks', None)
+            executor.pop('maxTasks', None)
+            executor.pop('memoryUsed', None)
+            executor.pop('isActive', None)
+
+            result.append(executor)
+
+        return result
+
 
 class ParserFactory(object):
-    parser_types = {'app', 'job', 'stage', 'task'}
+    parser_types = {'app', 'job', 'stage', 'task', 'exec'}
 
     @staticmethod
     def get_parser(parser_type, server):
         if parser_type not in ParserFactory.parser_types:
             raise Exception("Unknown parser type!")
+
         if parser_type == "app": return AppParser(server)
         elif parser_type == "job": return JobParser(server)
         elif parser_type == "stage": return StageParser(server)
+        elif parser_type == "exec": return ExecParser(server)
         else: return TaskParser(server)
