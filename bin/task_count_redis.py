@@ -25,6 +25,7 @@ def main():
         data = parser.get_data()
         if data != {}:
             timestamp = datetime.datetime.now()
+            print base_key, timestamp, data
             db.hset(base_key, timestamp, data)
             time.sleep(config.period)
 
