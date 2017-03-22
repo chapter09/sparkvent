@@ -24,8 +24,14 @@ def main():
     while True:
         data = parser.get_data()
         if data != {}:
+            store = {}
             timestamp = datetime.datetime.now()
-            print base_key, timestamp, data
+            for stage, value in data.items():
+                store[stage] = {
+                    'numActiveTasks': value['numActiveTasks'],
+                    'numCompleteTasks': value['numCompleteTasks'],
+                    'numFailedTasks': value['numFailedTasks'],
+                }
             db.hset(base_key, timestamp, data)
             time.sleep(config.period)
 
