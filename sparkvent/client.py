@@ -16,9 +16,13 @@ class Client(object):
         self.config = Config(path.abspath(config_file))
         self.url_gen = UrlGen()
         self.requester = HttpRequester()
-        self.app_parser = AppParser()
-        self.job_parser = JobParser()
-        self.stage_parser = StageParser()
+        self.app_parser = AppParser(self.config.server)
+        self.job_parser = JobParser(self.config.server)
+        self.stage_parser = StageParser(self.config.server)
+
+        # Get parser from config
+        self.parser = ParserFactory.get_parser(self.config.type,
+                                               self.config.server)
 
         self.parse_type = ''  # used to inform the parser of parsing type
         self.data = []
@@ -29,13 +33,14 @@ class Client(object):
     # get all available info (apps, jobs, stages)
     def get_all_info(self):
         data = []
-        entry = {'application': None, 'jobs': None, 'stages': None}
         apps = self.get_all_applications()  # get all app ids
         for app in apps:
+            entry = dict()
             entry['application'] = app
-            entry['jobs'] = self.get_all_jobs_from_application(app['id'], app)
+            entry['jobs'] = self.get_all_jobs_from_application(app['id'])
             entry['stages'] = self.get_all_stages_from_application(app['id'])
             data.append(entry)
+
         self.data.append(data)  # add to global data storage
         return data
 
@@ -45,7 +50,7 @@ class Client(object):
         data = self._get_data(rest_api, self.app_parser, option)
         return data
 
-    def get_all_jobs_from_application(self, app_id, application=None, status=''):
+    def get_all_jobs_from_application(self, app_id, status=''):
         rest_api = app_id + '/' + 'jobs'
         self.parse_type = 'jobid'
 
@@ -92,13 +97,15 @@ class Client(object):
         return data
 
     def _get_data(self, rest_api, parser, option={}):
-        url = self.url_gen.get_url(self.config.history_server, rest_api, option)
+        url = self.url_gen.get_url(self.config.server, rest_api, option)
         json_response = self.requester.single_request(url)
 
         if option == {}:
             response = parser.parse_json(json_response, self.parse_type)
         elif option['type'] == 'redis':
             response = parser.get_redis_entry(json_response)
+        else:
+            response = parser.parse_json(json_response, self.parse_type)
 
         return response
 

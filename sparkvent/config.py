@@ -7,14 +7,16 @@ class Config(object):
         try:
             with open(conf_path, 'r') as cfg_fd:
                 conf = yaml.load(cfg_fd)
-        except FileNotFoundError as e:
-            print(e)
 
-        self.spark_master = conf['spark-master']
-        self.history_server = conf['history-server']
-        self.period = conf['period']
-        self.redis = conf['redis']
-        self.app = conf['app']
-        self.job = conf['job']
-        self.stage = conf['stage']
-        self.task = conf['task']
+                if conf['mode'] == 'active':
+                    self.server = conf['spark-master']
+                elif conf['mode'] == 'history':
+                    self.server = conf['history-server']
+                else:
+                    self.server = conf['history-server']
+
+                self.period = conf['period']
+                self.redis = conf['redis']
+                self.type = conf['type']
+        except IOError as e:
+            print(e)

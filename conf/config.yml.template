@@ -7,23 +7,11 @@ period: 5 #second
 spark-master: spark://142.150.208.147:4000
 history-server: 142.150.208.147:18080
 
-# Parser type
-# app/job/stage/task
+# Server: active/history
+mode: history
+
+# Parser type: app/job/stage/task
 type: app
-
-# Metrics
-app:
-- x
-
-job:
-- x
-
-stage:
-- x
-
-task:
-- x
-
 
 # Output
 redis: 142.150.208.147:6379
