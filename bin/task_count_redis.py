@@ -32,7 +32,7 @@ def main():
                     'numCompleteTasks': value['numCompleteTasks'],
                     'numFailedTasks': value['numFailedTasks'],
                 }
-            db.hset(base_key, timestamp, data)
+            db.hset(base_key, timestamp, store)
             time.sleep(config.period)
 
 
