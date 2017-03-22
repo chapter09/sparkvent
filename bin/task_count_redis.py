@@ -1,19 +1,19 @@
 #!/usr/bin/python
 import sys
+sys.path.insert(0, '../sparkvent')
+
+from sparkvent.config import Config
+from sparkvent.resp_parse import *
 import os
 import time
 import datetime
 import redis
 
-from sparkvent.config import Config
-from sparkvent.resp_parse import *
 
-sys.path.insert(0, '../sparkvent')
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
 
-
 def main():
-    config = Config(os.path.abspath(ROOT_DIR + "/conf/config.yml.template"))
+    config = Config(os.path.abspath(ROOT_DIR + "/conf/config.yml"))
     parser = ParserFactory.get_parser(config.type, config.server)
     redis_host, redis_port = config.redis.split(":")
     db = redis.Redis(host=redis_host, port=redis_port)
