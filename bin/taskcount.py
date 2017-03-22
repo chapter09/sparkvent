@@ -2,16 +2,18 @@
 
 import sys
 import os
-sys.path.insert(0, '../sparkvent')
 
+sys.path.insert(0, '../sparkvent')
 from sparkvent.client import *
 from sparkvent.config import Config
 import csv
 
-ROOT_DIR = os.path.realpath(__file__)
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
+
 
 def main():
-    client = Client("../conf/config.yml")
+    client = Client(ROOT_DIR + "/conf/config.yml.template")
     all_data = client.get_all_info()
     task_count = get_task_count_for_all_apps(all_data)
     output_csv(task_count)
@@ -31,7 +33,8 @@ def get_task_count_for_app(stages):
 
 
 def get_task_count_for_all_apps(entries):
-    # entries should be the dictionary containing entry: {'application': None, 'jobs': None, 'stages': None}
+    # entries should be the dictionary containing entry:
+    # {'application': None, 'jobs': None, 'stages': None}
     result = {}
     for entry in entries:
         app = entry['application']
@@ -39,6 +42,7 @@ def get_task_count_for_all_apps(entries):
         result[app['id']] = task_count
 
     return result
+
 
 def output_csv(task_count):
     # task_count is the data output by get_task_count_for_all_apps

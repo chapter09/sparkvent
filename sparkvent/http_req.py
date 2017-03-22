@@ -38,4 +38,5 @@ class HttpRequester(object):
             return address, None, e
 
     def single_request(self, address):
-        return self.get_json_from_address(address)[1]  # data is positioned at index 1
+        # data is positioned at index 1
+        return self.get_json_from_address(address)[1]
