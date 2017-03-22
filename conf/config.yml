@@ -3,10 +3,8 @@
 # General
 period: 5 #second
 
-
-
 # Input
-spark-master: spark://xx:4000
+spark-master: spark://142.150.208.147:4000
 history-server: 142.150.208.147:18080
 
 # Parser type
