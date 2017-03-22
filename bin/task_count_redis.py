@@ -1,16 +1,16 @@
 #!/usr/bin/python
 import sys
+sys.path.insert(0, '../sparkvent')
+
+from sparkvent.config import Config
+from sparkvent.resp_parse import *
 import os
 import time
 import datetime
 import redis
 
-sys.path.insert(0, '../sparkvent')
-from sparkvent.config import Config
-from sparkvent.resp_parse import *
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
-
 
 def main():
     config = Config(os.path.abspath(ROOT_DIR + "/conf/config.yml"))
