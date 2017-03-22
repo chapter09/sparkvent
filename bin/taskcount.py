@@ -13,7 +13,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
 
 
 def main():
-    client = Client(ROOT_DIR + "/conf/config.yml")
+    client = Client(ROOT_DIR + "/conf/config.yml.template")
     all_data = client.get_all_info()
     task_count = get_task_count_for_all_apps(all_data)
     output_csv(task_count)

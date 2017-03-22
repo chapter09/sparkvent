@@ -111,20 +111,20 @@ class JobParser(AbstractParser):
         for job in jsd:
             entry_key = app_id + ':jobs:' + str(job['jobId'])
             entry_value = {
-                'jobId': job['jobId'],
-                'submissionTime': job['submissionTime'],
-                'completionTime': job['completionTime'],
-                'stageIds': job['stageIds'],
-                'status': job['status'],
-                'numTasks': job['numTasks'],
-                'numActiveTasks': job['numActiveTasks'],
-                'numCompletedTasks': job['numCompletedTasks'],
-                'numSkippedTasks': job['numSkippedTasks'],
-                'numFailedTasks': job['numFailedTasks'],
-                'numActiveStages': job['numActiveStages'],
-                'numCompletedStages': job['numCompletedStages'],
-                'numSkippedStages': job['numSkippedStages'],
-                'numFailedStages': job['numFailedStages'],
+                'jobId':                job['jobId'],
+                'submissionTime':       job['submissionTime'],
+                'completionTime':       job['completionTime'],
+                'stageIds':             job['stageIds'],
+                'status':               job['status'],
+                'numTasks':             job['numTasks'],
+                'numActiveTasks':       job['numActiveTasks'],
+                'numCompletedTasks':    job['numCompletedTasks'],
+                'numSkippedTasks':      job['numSkippedTasks'],
+                'numFailedTasks':       job['numFailedTasks'],
+                'numActiveStages':      job['numActiveStages'],
+                'numCompletedStages':   job['numCompletedStages'],
+                'numSkippedStages':     job['numSkippedStages'],
+                'numFailedStages':      job['numFailedStages'],
             }
             entries[entry_key] = entry_value
         return entries
@@ -182,8 +182,6 @@ class StageParser(AbstractParser):
                 'stageId': stage['stageId'],
                 'status': stage['status'],
                 'attemptId': stage['attemptId'],
-                'submissionTime': stage['submissionTime'],
-                'completionTime': stage['completionTime'],
                 'numActiveTasks': stage['numActiveTasks'],
                 'numCompleteTasks': stage['numCompleteTasks'],
                 'numFailedTasks': stage['numFailedTasks'],
@@ -258,4 +256,4 @@ class ParserFactory(object):
         if parser_type == "app": return AppParser(server)
         elif parser_type == "job": return JobParser(server)
         elif parser_type == "stage": return StageParser(server)
-        elif parser_type == "task": return TaskParser(server)
+        else: return TaskParser(server)
