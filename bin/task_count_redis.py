@@ -8,6 +8,7 @@ import os
 import time
 import datetime
 import redis
+import json
 
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
@@ -32,6 +33,7 @@ def main():
                     'numCompleteTasks': value['numCompleteTasks'],
                     'numFailedTasks': value['numFailedTasks'],
                 }
+            print timestamp, json.dumps(store)
             db.hset(base_key, timestamp, store)
             time.sleep(config.period)
 
