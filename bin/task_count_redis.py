@@ -12,6 +12,7 @@ import redis
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__ + "/../"))
 
+
 def main():
     config = Config(os.path.abspath(ROOT_DIR + "/conf/config.yml"))
     parser = ParserFactory.get_parser(config.type, config.server)
