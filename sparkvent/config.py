@@ -18,5 +18,8 @@ class Config(object):
                 self.period = conf['period']
                 self.redis = conf['redis']
                 self.type = conf['type']
+                self.cpu_num = conf['cpu_num']
+                self.mem_num = conf['mem_num']
+                self.exec_num = conf['exec_num']
         except IOError as e:
             print(e)

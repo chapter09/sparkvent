@@ -39,9 +39,13 @@ class AppParser(AbstractParser):
         for app in jsd:
             app_dict = {}
             # for every appid
+            print app
+            exit(0)
             for key, value in app.iteritems():
                 if key == 'id':
                     app_dict['id'] = value
+                if key == 'name':
+                    app_dict['name'] = value
                 if key == 'attempts':
                     app_dict['duration'] = str(value[0]['duration'])
                     app_dict['start_time'] = value[0]['startTime']
@@ -57,9 +61,10 @@ class AppParser(AbstractParser):
             entry_key = app['id']
             entry_value = {
                 'id': app['id'],
+                'name': app['name'],
                 'duration': str(app['attempts'][0]['duration']),
-                'start_time': app['attempts'][0]['startTime'],
-                'end_time': app['attempts'][0]['startTime'],
+                # 'start_time': app['attempts'][0]['startTime'],
+                # 'end_time': app['attempts'][0]['startTime'],
             }
             entries[entry_key] = entry_value
         return entries
@@ -87,20 +92,20 @@ class JobParser(AbstractParser):
 
         for job in jsd:
             new_job = Job()
-            new_job.id                   = job['jobId']
-            new_job.submission_time      = job['submissionTime']
-            new_job.completion_time      = job['completionTime']
-            new_job.stage_ids            = job['stageIds']
-            new_job.status               = job['status'] == 'SUCCEEDED'
-            new_job.num_tasks            = job['numTasks']
-            new_job.num_active_tasks     = job['numActiveTasks']
-            new_job.num_completed_tasks  = job['numCompletedTasks']
-            new_job.num_skipped_tasks    = job['numSkippedTasks']
-            new_job.num_failed_tasks     = job['numFailedTasks']
-            new_job.num_active_stages    = job['numActiveStages']
+            new_job.id = job['jobId']
+            new_job.submission_time = job['submissionTime']
+            new_job.completion_time = job['completionTime']
+            new_job.stage_ids = job['stageIds']
+            new_job.status = job['status'] == 'SUCCEEDED'
+            new_job.num_tasks = job['numTasks']
+            new_job.num_active_tasks = job['numActiveTasks']
+            new_job.num_completed_tasks = job['numCompletedTasks']
+            new_job.num_skipped_tasks = job['numSkippedTasks']
+            new_job.num_failed_tasks = job['numFailedTasks']
+            new_job.num_active_stages = job['numActiveStages']
             new_job.num_completed_stages = job['numCompletedStages']
-            new_job.num_skipped_stages   = job['numSkippedStages']
-            new_job.num_failed_stages    = job['numFailedStages']
+            new_job.num_skipped_stages = job['numSkippedStages']
+            new_job.num_failed_stages = job['numFailedStages']
 
             jobs.append(new_job)
         return jobs
@@ -245,6 +250,7 @@ class TaskParser(AbstractParser):
         rest_api = app_id + '/' + 'stages' + '/' + stage_id
         return rest_api
 
+
 class ExecParser(AbstractParser):
     def __init__(self, server):
         super(ExecParser, self).__init__(server)
@@ -282,8 +288,13 @@ class ParserFactory(object):
         if parser_type not in ParserFactory.parser_types:
             raise Exception("Unknown parser type!")
 
-        if parser_type == "app": return AppParser(server)
-        elif parser_type == "job": return JobParser(server)
-        elif parser_type == "stage": return StageParser(server)
-        elif parser_type == "exec": return ExecParser(server)
-        else: return TaskParser(server)
+        if parser_type == "app":
+            return AppParser(server)
+        elif parser_type == "job":
+            return JobParser(server)
+        elif parser_type == "stage":
+            return StageParser(server)
+        elif parser_type == "exec":
+            return ExecParser(server)
+        else:
+            return TaskParser(server)

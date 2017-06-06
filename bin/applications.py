@@ -10,7 +10,7 @@ def main():
     parser = ParserFactory.get_parser('stage', client.config.server)
     data = parser.get_data()
     print data
-    client.store_info(data)
+    # client.store_info(data)
 
 
 if __name__ == '__main__':

@@ -45,7 +45,6 @@ class Client(object):
         self.data.append(data)  # add to global data storage
         return data
 
-
     def get_executor_info(self):
         data = []
         apps = self.get_all_applications()  # get all app ids
@@ -58,8 +57,9 @@ class Client(object):
 
         return data
 
-    #############################################################################
-    ## methods for single aspect
+    ###########################################################################
+    # methods for single aspect
+    ###########################################################################
 
     def get_all_applications(self, option={}):
         rest_api = ''
@@ -119,7 +119,6 @@ class Client(object):
         data = self._get_data(rest_api, self.exec_parser)
 
         return data
-
 
     def _get_data(self, rest_api, parser, option={}):
         url = self.url_gen.get_url(self.config.server, rest_api, option)
