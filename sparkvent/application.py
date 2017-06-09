@@ -33,4 +33,8 @@ class Stage(object):
         self.num_active_tasks = 0
         self.num_completed_tasks = 0
         self.num_failed_tasks = 0
+        self.completion_time = ''
+        self.input_size = 0
+        self.output_size = 0
+        
 

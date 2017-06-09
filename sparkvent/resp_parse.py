@@ -16,6 +16,9 @@ class AbstractParser(object):
 
     def get_data(self):
         pass
+    
+    def get_sample_data(self):
+        pass
 
     def _get_response(self, rest_api):
         url = self.url_gen.get_url(self.server, rest_api)
@@ -68,6 +71,12 @@ class AppParser(AbstractParser):
             }
             entries[entry_key] = entry_value
         return entries
+    
+    def get_sample_data(self):
+        rest_api = ''
+        json_string = self._get_response(rest_api)
+        response = dict(self.parse_json_redis(json_string).items()[:10])
+        return response
 
     def get_data(self):
         rest_api = ''
@@ -171,6 +180,8 @@ class StageParser(AbstractParser):
             new_stage.num_active_tasks = stage['numActiveTasks']
             new_stage.num_completed_tasks = stage['numCompleteTasks']
             new_stage.num_failed_tasks = stage['numFailedTasks']
+            new_stage.input_size = stage['shuffleReadBytes']
+            new_stage.completion_time = stage['']
             stages.append(new_stage)
 
         return stages
@@ -184,6 +195,7 @@ class StageParser(AbstractParser):
         for stage in jsd:
             entry_key = app_id + ':stages:' + str(stage['stageId'])
             entry_value = {
+                'app_id': app_id,
                 'stageId': stage['stageId'],
                 'status': stage['status'],
                 'attemptId': stage['attemptId'],
@@ -197,6 +209,16 @@ class StageParser(AbstractParser):
     def get_rest_api(self, app_id):
         rest_api = app_id + '/' + 'stages'
         return rest_api
+    
+    def get_sample_data(self):
+        apps = dict(self.app_parser.get_data().items()[:10])
+        response = {}
+        for app in apps.values():
+            app_id = app['id']
+            rest_api = self.get_rest_api(app_id)
+            json_string = self._get_response(rest_api)
+            response.update(self.parse_json_redis(json_string, app_id))
+        return response
 
     def get_data(self):
         apps = self.app_parser.get_data()
