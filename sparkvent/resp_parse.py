@@ -3,6 +3,7 @@ import json
 from application import *
 from http_req import *
 from url_gen import *
+from datetime import datetime
 
 
 class AbstractParser(object):
@@ -175,14 +176,23 @@ class StageParser(AbstractParser):
         stages = []
 
         for stage in jsd:
-            new_stage = Stage()
-            new_stage.id = stage['stageId']
-            new_stage.num_active_tasks = stage['numActiveTasks']
-            new_stage.num_completed_tasks = stage['numCompleteTasks']
-            new_stage.num_failed_tasks = stage['numFailedTasks']
-            new_stage.input_size = stage['shuffleReadBytes']
-            new_stage.completion_time = stage['']
-            stages.append(new_stage)
+            try:
+                new_stage = Stage()
+                new_stage.id = int(stage['stageId'])
+                new_stage.num_active_tasks = int(stage['numActiveTasks'])
+                new_stage.num_completed_tasks = int(stage['numCompleteTasks'])
+                new_stage.num_failed_tasks = int(stage['numFailedTasks'])
+                new_stage.input_bytes = float(stage['inputBytes'])
+                sub_time = datetime.strptime(stage['submissionTime'], 
+                                             "%Y-%m-%dT%H:%M:%S.%fGMT")
+                comp_time = datetime.strptime(stage['completionTime'],
+                                              "%Y-%m-%dT%H:%M:%S.%fGMT")
+                new_stage.completion_time = (comp_time - sub_time).total_seconds()
+                new_stage.shuffle_write_bytes = float(stage['shuffleWriteBytes'])
+                new_stage.shffule_read_bytes = float(stage['shuffleReadBytes'])
+                stages.append(new_stage)
+            except KeyError:
+                pass
 
         return stages
 
@@ -193,17 +203,28 @@ class StageParser(AbstractParser):
         entries = {}
         jsd = json.loads(json_input)
         for stage in jsd:
-            entry_key = app_id + ':stages:' + str(stage['stageId'])
-            entry_value = {
-                'app_id': app_id,
-                'stageId': stage['stageId'],
-                'status': stage['status'],
-                'attemptId': stage['attemptId'],
-                'numActiveTasks': stage['numActiveTasks'],
-                'numCompleteTasks': stage['numCompleteTasks'],
-                'numFailedTasks': stage['numFailedTasks'],
-            }
-            entries[entry_key] = entry_value
+            try:
+                sub_time = datetime.strptime(stage['submissionTime'], 
+                                         "%Y-%m-%dT%H:%M:%S.%fGMT")
+                comp_time = datetime.strptime(stage['completionTime'],
+                                          "%Y-%m-%dT%H:%M:%S.%fGMT")
+                entry_key = app_id + ':stages:' + str(stage['stageId'])
+                entry_value = {
+                    'app_id': app_id,
+                    'stageId': stage['stageId'],
+                    'status': stage['status'],
+                    'attemptId': stage['attemptId'],
+                    'numActiveTasks': int(stage['numActiveTasks']),
+                    'numCompleteTasks': int(stage['numCompleteTasks']),
+                    'numFailedTasks': int(stage['numFailedTasks']),
+                    'inputBytes-%d'% stage['stageId']: float(stage['inputBytes']),
+                    'completionTime-%d' % stage['stageId']: (comp_time - sub_time).total_seconds(),
+                    'shuffleWriteBytes-%d' % stage['stageId']: float(stage['shuffleWriteBytes']),
+                    'shuffleReadBytes-%d' % stage['stageId']: float(stage['shuffleReadBytes'])
+                }
+                entries[entry_key] = entry_value
+            except KeyError:
+                pass
         return entries
 
     def get_rest_api(self, app_id):

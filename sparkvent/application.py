@@ -35,6 +35,10 @@ class Stage(object):
         self.num_failed_tasks = 0
         self.completion_time = ''
         self.input_size = 0
-        self.output_size = 0
+        self.input_bytes = 0
+        self.completion_time = 0
+        self.shuffle_write_bytes = 0
+        self.shffule_read_bytes = 0
+
         
 
