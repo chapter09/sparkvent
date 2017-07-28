@@ -17,11 +17,11 @@ class HttpRequester(object):
 
     def make_request(self):
         results = self.thread_pool.imap_unordered(self.get_json_from_address, self.urls)
-		if error is None:
-			print("Request to %s successful" % url)
-			self.json_result.append(data)
-		else:
-			print("Request to %s failed with error" % url)
+        if error is None:
+            print("Request to %s successful" % url)
+            self.json_result.append(data)
+        else:
+            print("Request to %s failed with error" % url)
 
         # clear the url array after request, for next run
         self.urls = []
@@ -33,7 +33,7 @@ class HttpRequester(object):
             response = urllib2.urlopen(req)
             return address, response.read(), None
         except urllib2.URLError as e:
-            print e.reason
+            print(e)
             exit(1) 
 
     def single_request(self, address):
