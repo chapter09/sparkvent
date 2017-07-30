@@ -43,7 +43,7 @@ class AppParser(AbstractParser):
         for app in jsd:
             app_dict = {}
             # for every appid
-            print app
+            print(app)
             exit(0)
             for key, value in app.iteritems():
                 if key == 'id':
@@ -241,14 +241,20 @@ class StageParser(AbstractParser):
             response.update(self.parse_json_redis(json_string, app_id))
         return response
 
-    def get_data(self):
+    def get_data(self, app_ids=None):
         apps = self.app_parser.get_data()
         response = {}
-        for app in apps.values():
-            app_id = app['id']
-            rest_api = self.get_rest_api(app_id)
-            json_string = self._get_response(rest_api)
-            response.update(self.parse_json_redis(json_string, app_id))
+        if app_ids:
+            for app_id in app_ids:
+                rest_api = self.get_rest_api(app_id)
+                json_string = self._get_response(rest_api)
+                response.update(self.parse_json_redis(json_string, app_id))
+        else:
+            for app in apps.values():
+                app_id = app['id']
+                rest_api = self.get_rest_api(app_id)
+                json_string = self._get_response(rest_api)
+                response.update(self.parse_json_redis(json_string, app_id))
         return response
 
 
